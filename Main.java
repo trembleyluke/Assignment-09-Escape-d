@@ -15,64 +15,76 @@ public class Main {
     public static boolean piano = false;
     public static boolean unlockConservatorydoor = false;
     public static int oneTurn;
+    public static boolean openFoyerdoor = false;
+    public static boolean openLibrarydoor = false;
+    public static boolean openConservatorydoor = false;
+    public static boolean escaped = false;
 
 
     public static void main(String[] args) {
         oneTurn = 30;
         System.out.println("You wake up in a foyer. The only things in the room are a bench with a note on top, a chest, and an unlit candle. A locked door sits in the north. What do you want to do first?");
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-        turn();
-
-    }
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+          turn();
+      }
 
     public static void turn() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print(">>");
-        String command = sc.nextLine();
-        if (inFoyer) {
-            System.out.println(foyer(command));
-        } else if (inLibrary) {
-            System.out.println(library(command));
-        } else if (inConservatory){
-            System.out.println(conservatory(command));
-        }else{
-        System.out.println("You are free!");
-        }
-
-        oneTurn = oneTurn - 1;
-        if (oneTurn > 0) {
-            System.out.println("You have " + oneTurn + " turns left");
-        } else {
-            System.out.println("Oh no! You ran out of turns. You are stuck eternally.");
-        }
+       if (!escaped) {
+           if (inFoyer) {
+               Scanner sc = new Scanner(System.in);
+               System.out.print(">>");
+               String command = sc.nextLine();
+               System.out.println(foyer(command));
+           } else if (inLibrary) {
+               Scanner sc = new Scanner(System.in);
+               System.out.print(">>");
+               String command = sc.nextLine();
+               System.out.println(library(command));
+           } else if (inConservatory) {
+               Scanner sc = new Scanner(System.in);
+               System.out.print(">>");
+               String command = sc.nextLine();
+               System.out.println(conservatory(command));
+           } else {
+               System.out.println("You are free!");
+           }
+           oneTurn = oneTurn - 1;
+           if (oneTurn > 0) {
+               System.out.println("You have " + oneTurn + " turns left");
+           } else {
+               System.out.println("Oh no! You ran out of turns. You are stuck eternally.");
+           }
+       }else{
+          System.out.println("You beat the escape room!");
+       }
     }
 
     public static String foyer(String tasks) {
@@ -116,34 +128,32 @@ public class Main {
                     output = "What matches?";
                 }
                 break;
-            case "light matches":
-            case "Light matches":
-                if (haveMatches) {
-                    output = "you light the matches";
-                    lightMatches = true;
-                } else {
-                    output = "What matches?";
-                }
-                break;
             case "light candle":
             case "Light candle":
-                if (lightMatches) {
+                if (haveMatches) {
                     output = "You light the candle and the door unlocks to the north";
                     unlockFoyerdoor = true;
-                } else if (haveMatches) {
-                    output = "you can't light a candle with unlit matches";
                 } else {
-                    output = "With what? You dont have anything light it with";
+                    output = "With what? You don't have anything light it with";
                 }
                 break;
             case "open door":
             case "Open door":
                 if (unlockFoyerdoor) {
-                    output = "You open the door and find yourself in a library. You see a desk with a scroll and pen on top, shelves lined with books, and another locked door to the north. The door quickly shuts behind you. What do you do now?";
-                    inFoyer = false;
-                    inLibrary = true;
+                    output = "You open the door";
+                    openFoyerdoor = true;
                 } else {
                     output = "The door is locked";
+                }
+                break;
+            case "go north":
+            case "Go north":
+                if (openFoyerdoor){
+                    inFoyer = false;
+                    inLibrary = true;
+                    output = "You now find yourself in a library. You see a desk with a scroll and pen on top, shelves lined with books, and another locked door to the north. The door quickly shuts behind you. What do you do now?";
+                }else{
+                    output = "The door isn't open yet.";
                 }
                 break;
             default:
@@ -168,18 +178,27 @@ public class Main {
             case "Look desk":
                 output = "On the desk sits the scroll and a pen.";
                 break;
+            case "look book":
+            case "Look book":
+                output = "You pick up the book and the title is 'The Autobiography of...'";
+                break;
+            case "look pen":
+            case "Look pen":
+                output = "It's just a pen";
+                break;
+            case "look scroll":
+            case "Look scroll":
+                output = "The scroll sits rolled up on desk";
+                break;
             case "read scroll":
             case "Read scroll":
                 output = "The scroll says'Share your Story'";
                 break;
             case "look shelves":
             case "Look shelves":
+            case "look shelf":
+            case "Look shelf":
                 output = "One book stands out in the book shelf. The title is 'The Autobiography of...'";
-                break;
-            case "get book":
-            case "Get book":
-                output = "You grab the book and place it on the desk";
-                haveBook = true;
                 break;
             case "Get pen":
             case "get pen":
@@ -188,25 +207,32 @@ public class Main {
                 break;
             case "write book":
             case "Write book":
-                if (haveBook && havePen) {
+                if (havePen) {
                     output = "You write your name in the book and the door suddenly unlocks. Magical!";
                     unlockLibrarydoor = true;
-                } else if (haveBook && !havePen) {
-                    output = "You have nothing to write it with.";
                 } else {
-                    output = "What book?";
+                    output = "With what?";
                 }
                 break;
             case "open door":
             case "Open door":
                 if (unlockLibrarydoor) {
-                    output = "You open the door and reach the Conservatory. In the conservatory there is a trumpet, piano, and a drum. A piece of sheet music lies on a stand. Once again their is a door to the north.";
-                    inConservatory = true;
-                    inLibrary = false;
+                    output = "You open the door.";
+                   openLibrarydoor = true;
                 } else {
                     output = "The door is locked";
                 }
                 break;
+            case "go north":
+            case "Go north":
+                if (openLibrarydoor) {
+                    inConservatory = true;
+                    inLibrary = false;
+                    output = "You have now reached the Conservatory. In the conservatory there is a trumpet, piano, and a drum. A piece of sheet music lies on a stand. Once again their is a door to the north.";
+                }else{
+                    output = "The door isn't open yet";
+                }
+                    break;
             default:
                 output = "Weird. Nothing happened.";
                 break;
@@ -215,7 +241,7 @@ public class Main {
     }
     public static String conservatory(String task1){
         String output;
-        switch(task1){
+        switch(task1) {
             case "help":
             case "Help":
                 output = "verbs = open, close, light, read, write, play, look, get.   Nouns = door, room, bench, chest, candle, note, matches, shelves, book, pen, scroll, music, trumpet, piano, drum, lock.";
@@ -247,10 +273,14 @@ public class Main {
                 break;
             case "play piano":
             case "Play piano":
-                if(trumpet){
+                if (trumpet && piano) {
+                    output = "you played the piano too many times and it resets the lock.";
+                    piano = false;
+                    trumpet = false;
+                } else if (trumpet) {
                     output = "Another latch on the lock opens, but it is still isn't fully unlocked.";
                     piano = true;
-                }else{
+                } else {
                     output = "You play the piano, but nothing happens.";
                 }
                 break;
@@ -269,12 +299,22 @@ public class Main {
             case "open door":
             case "Open door":
                 if(unlockConservatorydoor) {
-                    output = "You open the door and walk out into your freedom.";
-                    inConservatory = false;
+                    output = "You open the door";
+                    openConservatorydoor = true;
                 }else {
                     output = "The door is locked";
                 }
                 break;
+            case "go north":
+            case "Go north":
+                if (openConservatorydoor) {
+                    inConservatory = false;
+                    escaped = true;
+                    output = " You walk out into your freedom!";
+                }else{
+                    output = "The door isn't open yet";
+                }
+                    break;
                 default:
                     output = "Weird. Nothing happened";
                     break;
